@@ -282,6 +282,10 @@ app.post('/apply', async (req, res) => {
     res.redirect('/dashboard');
 });
 
+app.get('/statut', (req, res) => {
+    res.render('statut', { code: "STATUT", message: "Le système de statut en temps réel est actuellement indisponible. Veuillez consulter votre dashboard pour les mises à jour." });
+});
+
 app.get('/membres', async (req, res) => {
     try {
         const db = getDB();
