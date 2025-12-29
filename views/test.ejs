@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Test Appel IVR MikoPBX</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .box {
+      text-align: center;
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 40px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 15px 30px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #22c55e;
+      color: #052e16;
+    }
+
+    button:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
+
+    #status {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h1>📞 Appel IVR</h1>
+  <button id="call">Appeler le serveur vocal</button>
+  <div id="status">En attente…</div>
+</div>
+
+<script src="https://unpkg.com/sip.js@0.21.2/dist/sip.min.js"></script>
+<script>
+/* ===== CONFIG ===== */
+const SIP_DOMAIN = "sip.paname-75.fr";
+const EXTENSION  = "9000";                 // extension WebRTC
+const PASSWORD   = "MOT_DE_PASSE_SIP";     // mot de passe SIP
+const IVR        = "2003";                 // numéro de l’IVR
+const WSS_PORT   = 8089;                   // port WebSocket SIP
+const STUN_URL   = "stun:stun.paname-75.fr:19302";
+
+/* ===== UI ===== */
+const button = document.getElementById("call");
+const status = document.getElementById("status");
+
+/* ===== SIP.JS ===== */
+status.textContent = "Connexion au serveur…";
+
+const ua = new SIP.UA({
+  uri: `sip:${EXTENSION}@${SIP_DOMAIN}`,
+  transportOptions: {
+    wsServers: [`wss://${SIP_DOMAIN}:${WSS_PORT}/ws`]
+  },
+  authorizationUser: EXTENSION,
+  password: PASSWORD,
+  register: true,
+  sessionDescriptionHandlerFactoryOptions: {
+    constraints: {
+      audio: true,
+      video: false
+    },
+    peerConnectionOptions: {
+      rtcConfiguration: {
+        iceServers: [
+          { urls: STUN_URL }
+        ]
+      }
+    }
+  }
+});
+
+/* ===== EVENTS ===== */
+ua.on("registered", () => {
+  status.textContent = "✅ Connecté – prêt à appeler";
+});
+
+ua.on("registrationFailed", (e) => {
+  console.error(e);
+  status.textContent = "❌ Erreur d’enregistrement SIP";
+  button.disabled = true;
+});
+
+button.onclick = () => {
+  status.textContent = "📡 Appel en cours…";
+  button.disabled = true;
+
+  const session = ua.invite(`sip:${IVR}@${SIP_DOMAIN}`);
+
+  session.on("accepted", () => {
+    status.textContent = "🎧 Appel connecté (IVR)";
+  });
+
+  session.on("terminated", () => {
+    status.textContent = "📴 Appel terminé";
+    button.disabled = false;
+  });
+
+  session.on("failed", () => {
+    status.textContent = "❌ Échec de l’appel";
+    button.disabled = false;
+  });
+};
+</script>
+
+</body>
+</html>
