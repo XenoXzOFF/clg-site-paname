@@ -9,6 +9,10 @@
       "name": "Chef d'établissement Adjoint",
       "max": 1
     },
+    "1455247758859698186": {
+      "name": "Responsable CPE",
+      "max": 1
+    },
     "1371881619488505877": {
       "name": "CPE",
       "max": 2
@@ -88,6 +92,10 @@
     "1371880953600807053": {
       "name": "Accueil",
       "max": "Infini"
+    },
+    "1454859245160759296": {
+      "name": "Référent Téléphonie",
+      "max": "0"
     },
     "1371879240454115559": {
       "name": "3e",
