@@ -75,7 +75,7 @@ async function sendConfirmMP(userId, posteLabel) {
         const embed = new EmbedBuilder()
             .setTitle("<:on:1450921440407716051> Votre candidature écrite a bien été envoyée.")
 // V1            .setDescription(`Votre dossier pour le poste de **${posteLabel}** a bien été réceptionné par nos services.`)
-            .setDescription('Une fois le formulaire envoyé, le délai de réponse est d\'environ *48 heures**.\nPassé ce délai, si vous n\'avez aucune réponse, vous pouvez demander à un RH.\n\n⚠️ Toute relance avant ce délai entraînera une sanction ou un refus immédiat.')
+            .setDescription('Une fois le formulaire envoyé, le délai de réponse est d\'environ **48 heures**.\nPassé ce délai, si vous n\'avez aucune réponse, vous pouvez demander à un RH.\n\n⚠️ Toute relance avant ce délai entraînera une sanction ou un refus immédiat.')
             .setColor(0x57f288).setTimestamp();
         await user.send({ embeds: [embed] });
     } catch (e) { console.error(`❌ MP impossible pour ${userId}:`, e); }
